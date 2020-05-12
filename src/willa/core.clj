@@ -81,6 +81,7 @@
                   (-> (join-entities builder (get-join joins parents) entities)
                       ws/coerce-to-kstream))]
     (cond-> kstream
+            (::flat-fn entity) (ws/flat-transduce (::flat-fn entity))
             (::xform entity) (ws/transduce-stream (::xform entity)))))
 
 

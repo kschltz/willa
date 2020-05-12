@@ -80,3 +80,25 @@
                                  (= 1 (count (get-in journal [:topics "output"])))))
 
         {:output-topic [{:key "k" :value 1}]})))
+
+
+(deftest flatmap-topology-tests
+ (is (u/results-congruous?
+      [:output-topic]
+      (u/run-tm-for-workflow
+       {:workflow [[:input-topic :stream]
+                   [:stream :output-topic]]
+        :entities {:input-topic  (u/->topic "input")
+                   :output-topic (u/->topic "output")
+                   :stream       {:willa.core/entity-type :kstream
+                                  :willa.core/flat-fn        (fn [[_ v]]
+                                                                    (->> (vals v)
+                                                                         (map #(vector % (inc %)))))}}}
+       {:input-topic [{:key "k" :value {:a 0
+                                        :b 1} :timestamp 100}]}
+       (fn [journal]
+        (= 1 (count (get-in journal [:topics "output"])))))
+
+      {:output-topic [{:key :a :value 1}
+                      {:key :b :value 2}]}))
+ )

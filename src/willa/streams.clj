@@ -126,6 +126,9 @@
 (defn transduce-stream [kstream xform]
   (streams/transform kstream #(TransducerTransformer. xform nil)))
 
+(defn flat-transduce [kstream kv-mapper]
+ (streams/flat-map kstream kv-mapper))
+
 (defn window-by [kgroupedstream window]
   (cond
     (instance? SessionWindows window) (streams/window-by-session kgroupedstream window)

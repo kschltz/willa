@@ -25,6 +25,11 @@
 (s/def :willa.core/xform
   (s/with-gen fn? #(gen/return (map identity))))
 
+(s/def :willa.core/flat-fn
+ (s/with-gen fn? #(gen/return (mapcat (fn [[k v]]
+                                       (->> v
+                                           (map (fn [e] [(hash e) e]))))))))
+
 (s/def :willa.core/window
   (s/with-gen #(instance? JoinWindows %)
               (fn []
